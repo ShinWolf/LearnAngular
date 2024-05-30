@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FaceSnap } from '../models/face-snap';
 import { FaceSnapComponent } from "../face-snap/face-snap.component";
 import { FaceSnapsService } from '../services/face-snaps.service';
-import { interval, take, tap } from 'rxjs';
+import { Subject, interval, takeUntil, tap } from 'rxjs';
 
 @Component({
   selector: 'app-face-snap-list',
@@ -11,18 +11,23 @@ import { interval, take, tap } from 'rxjs';
   styleUrl: './face-snap-list.component.scss',
   imports: [FaceSnapComponent]
 })
-export class FaceSnapListComponent implements OnInit {
+export class FaceSnapListComponent implements OnInit, OnDestroy {
   faceSnaps!: FaceSnap[];
+  private destroy$!: Subject<boolean>;
 
   constructor(private faceSnapsService: FaceSnapsService) { }
 
   ngOnInit(): void {
+    this.destroy$ = new Subject<boolean>();
     this.faceSnaps = this.faceSnapsService.getFaceSnaps();
 
     interval(1000).pipe(
-      // Take si on connais le nombre de valeur a récupère mais si on change de component il sera tjr présent
-      take(1),
+      takeUntil(this.destroy$),
       tap(console.log)
     ).subscribe();
+  }
+  // Cette methode detruit l'observable si le component est finie
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
   }
 }
