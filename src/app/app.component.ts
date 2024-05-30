@@ -25,7 +25,7 @@ export class AppComponent implements OnInit {
       take(10),
       map(value => value % 2 === 0 ? 'rouge' : 'jaune'),
       tap(color => console.log(`La lumière s'allume en %c${color}`, `color: ${this.translateColor(color)}`)),
-      // on attend qu'une requète est terminé avant de traité les autres (Ordre d'arrivé)
+      // Tant que la requète n'est pas terminé,selle ignore toutes les requètes reçu entre le debut de la première jusqu'a la fin de son traitement
       exhaustMap(color => this.getTrainObservable$(color)),
       tap(train => console.log(`Train %c${train.color} ${train.trainIndex} arrivé !`, `font-weight: bold; color: ${this.translateColor(train.color)}`))
     ).subscribe();
