@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HeaderComponent } from './header/header.component';
 import { RouterOutlet } from '@angular/router';
-import { Observable, concatMap, delay, filter, interval, map, mergeMap, of, take, tap } from 'rxjs';
+import { Observable, concatMap, delay, exhaustMap, filter, interval, map, mergeMap, of, take, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -25,8 +25,8 @@ export class AppComponent implements OnInit {
       take(10),
       map(value => value % 2 === 0 ? 'rouge' : 'jaune'),
       tap(color => console.log(`La lumière s'allume en %c${color}`, `color: ${this.translateColor(color)}`)),
-      // Envoie les requête a chaque demande
-      concatMap(color => this.getTrainObservable$(color)),
+      // on attend qu'une requète est terminé avant de traité les autres (Ordre d'arrivé)
+      exhaustMap(color => this.getTrainObservable$(color)),
       tap(train => console.log(`Train %c${train.color} ${train.trainIndex} arrivé !`, `font-weight: bold; color: ${this.translateColor(train.color)}`))
     ).subscribe();
   }
