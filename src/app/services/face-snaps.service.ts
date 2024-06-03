@@ -30,6 +30,10 @@ export class FaceSnapsService {
         )
     ];
 
+    generateId(): string {
+        return crypto.randomUUID().substring(0, 8);
+    }
+
     // Renvoi un tableau factices
     getFaceSnaps(): FaceSnap[] {
         return [...this.faceSnaps];
@@ -45,5 +49,17 @@ export class FaceSnapsService {
             throw new Error('FaceSnap not found!');
         }
         return foundFaceSnap;
+    }
+
+    addFaceSnap(formValue: { title: string, description: string, imageUrl: string, location?: string }): void {
+        const faceSnap = new FaceSnap(
+            formValue.title,
+            formValue.description,
+            formValue.imageUrl,
+            new Date(),
+            0
+        );
+
+        this.faceSnaps.push(faceSnap);
     }
 }
