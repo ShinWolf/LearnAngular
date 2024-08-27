@@ -3,12 +3,13 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { AuthService } from "../services/auth.service";
 
-Injectable()
+Injectable();
 export class AuthInterceptor implements HttpInterceptor {
     constructor(private authService: AuthService) { }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        const header = new HttpHeaders().append('Authorization', `Baerer ${this.authService.getToken()}`);
-        return next.handle(req.clone({ headers: header }));
+        const headers = new HttpHeaders().append("Authorization", `Baerer ${this.authService.getToken()}`);
+        const modifiedReq = req.clone({ headers });
+        return next.handle(modifiedReq);
     }
 }
